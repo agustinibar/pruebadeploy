@@ -193,6 +193,7 @@ function App() {
         <input type='file' onChange={(e)=> setFile(e.target.files[0])}></input>
       </div>
       <br></br>
+      <h1>MERCADO PAGO</h1>
       <button onClick={handleBuy}>Reserve</button>
       {preferenceId && <Wallet initialization={{ preferenceId: preferenceId}} />}
     </div>
