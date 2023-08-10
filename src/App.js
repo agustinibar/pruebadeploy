@@ -6,8 +6,36 @@ import {getDocs, collection, addDoc, updateDoc, doc} from 'firebase/firestore';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import {v4} from 'uuid'
 import React from 'react';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+
 
 function App() {
+   // CONFIGURACION DEL PAGO=======================================
+   const[preferenceId, setPreferenceId] = useState(null);
+   initMercadoPago("TEST-b1609369-11aa-4417-ac56-d07ef28cfcff");
+   
+     const createPreference = async()=>{
+         try {
+             const response = await axios.post(`http://localhost:3001/createorder`, {
+                 description: `anda el deploy con mercado libre`,
+                 price: 80,
+                 quantity: 1,
+                 currency_id: "ARS",
+             });
+ 
+             const { id } = response.data;
+ 
+             return id
+         } catch (error) {
+             console.log(error)
+         }
+     }
+     const handleBuy = async()=>{
+         const id = await createPreference();
+         if (id){
+             setPreferenceId(id)
+         }
+     }
   //obtener las propiedades en un array:
   const [propertiesList, setPropertiesList] = useState([]);
   //crear propiedades en el firestore:
@@ -163,9 +191,10 @@ function App() {
       </div>
       <div>
         <input type='file' onChange={(e)=> setFile(e.target.files[0])}></input>
-    
-
       </div>
+      <br></br>
+      <button onClick={handleBuy}>Reserve</button>
+      {preferenceId && <Wallet initialization={{ preferenceId: preferenceId}} />}
     </div>
   );
 }
